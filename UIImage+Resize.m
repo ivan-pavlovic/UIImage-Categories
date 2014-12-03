@@ -184,4 +184,32 @@
     return transform;
 }
 
+// Returns a rescaled copy of the image, taking into account its orientation
+// The image will be scaled disproportionately if necessary to fit the bounds specified by the parameter
+- (UIImage *)resizedImagetoFitWidth:(CGFloat)newWidth interpolationQuality:(CGInterpolationQuality)quality {
+    BOOL drawTransposed;
+    
+    CGFloat height = round(self.size.height * newWidth / self.size.width);
+
+    CGSize newSize = CGSizeMake(newWidth, height);
+    
+    CGAffineTransform transform = CGAffineTransformIdentity;
+    
+    switch ( self.imageOrientation )
+    {
+        case UIImageOrientationLeft:
+        case UIImageOrientationLeftMirrored:
+        case UIImageOrientationRight:
+        case UIImageOrientationRightMirrored:
+            drawTransposed = YES;
+            break;
+        default:
+            drawTransposed = NO;
+    }
+    
+    transform = [self transformForOrientation:newSize];
+    
+    return [self resizedImage:newSize transform:transform drawTransposed:drawTransposed interpolationQuality:quality];
+}
+
 @end
